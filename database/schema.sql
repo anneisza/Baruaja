@@ -1,10 +1,3 @@
--- Hapus tabel produk lama (sisa project sebelumnya)
--- ini rev
--- tabel dari versi lama, sudah tidak dipakai
-DROP TABLE IF EXISTS produk;
-DROP TABLE IF EXISTS dokter_jadwal;
-DROP TABLE IF EXISTS layanan;
-
 CREATE TABLE IF NOT EXISTS admins (
   id            SERIAL PRIMARY KEY,
   username      VARCHAR(50) UNIQUE NOT NULL,
@@ -18,7 +11,7 @@ CREATE TABLE IF NOT EXISTS jadwal (
   layanan      VARCHAR(100) NOT NULL,
   dokter       VARCHAR(100) NOT NULL,
   ruangan      VARCHAR(100) NOT NULL,
-  hari         VARCHAR(10) NOT NULL,
+  hari         VARCHAR(50) NOT NULL,  -- Sudah 50 agar aman
   jam          VARCHAR(50) NOT NULL,
   status       VARCHAR(20) NOT NULL DEFAULT 'Tersedia'
     CHECK (status IN ('Tersedia', 'Penuh', 'Libur')),
@@ -47,8 +40,12 @@ CREATE TABLE IF NOT EXISTS pengumuman (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+
+-- Jika dijalankan di DB kosong, admin dibuat.
+-- Jika dijalankan berkali-kali, tidak akan error duplicate.
 INSERT INTO admins (username, password_hash)
 VALUES (
   'admin',
   '$2b$10$v7otfWeItzbnYf2AK5UhRef6GtQwypPakr/I2M8Shco7etvCpaxFi'
-);
+)
+ON CONFLICT (username) DO NOTHING;
